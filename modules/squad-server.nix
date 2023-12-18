@@ -773,7 +773,7 @@ in
       # Credit to https://github.com/mkaito/nixos-modded-minecraft-servers/tree/master.
       # A fair bit of the handling of the nested servers was based upon the code there.
       enabledServers = lib.filterAttrs (_: conf: conf.enable) cfg.servers;
-      mkServerName = name: replaceNonAlum "-" name;
+      mkServerName = name: "squad-${replaceNonAlum "-" name}";
       eachEnabledServer = f: lib.mapAttrs' (name: config: lib.nameValuePair (mkServerName name) (f name config)) enabledServers;
       collectPorts = portType: lib.lists.flatten (lib.mapAttrsToList (_: serverConfig: serverConfig.${portType}) enabledServers);
       gamePorts = collectPorts "gamePort";
