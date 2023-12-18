@@ -14,14 +14,14 @@
          system = "x86_64-linux";
          modules = [
            # ...
-           squad-nix.nixosModules.default
+           squad-nix.nixosModules.server
          ]
        };
      }
    }
    #+END_SRC
 
-** Example Configuration
+** Example Server Configuration
 
    #+BEGIN_SRC nix
    services.squad-server = {
