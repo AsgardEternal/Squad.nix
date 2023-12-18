@@ -75,7 +75,7 @@
    };
    #+END_SRC
 
-   All settings can be viewed within the [[./nixos-modules/squad-servers.nix][Squad Server Module]].
+   All settings can be viewed within the [[./modules/squad-server.nix][Squad Server Module]].
 
 ** Defaults
 
