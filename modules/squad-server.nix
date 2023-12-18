@@ -950,7 +950,7 @@ in
                 sed -i -e 's/^Password=.*$/Password='"$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_RCON_PASSWORD_FILE)"'/g' ./Rcon.cfg
                 ''}
 
-                ${lib.optionalString (cfg.config.server.passwordFile != null) ''
+                ${lib.optionalString (cfg.config.license.file != null) ''
                 ## Handle secrets for the `License.cfg` file ##
                 # Safely load the license outside of the nix store
                 printf "%s" "$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_LICENSE_FILE)" > ./License.cfg
