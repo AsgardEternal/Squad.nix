@@ -426,7 +426,7 @@ in
             };
 
             motd = lib.mkOption {
-              type = lib.types.str;
+              type = lib.types.lines;
               default = "";
               description = ''
                 Message to show to all players who join the server.
