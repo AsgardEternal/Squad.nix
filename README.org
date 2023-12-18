@@ -1,0 +1,76 @@
+* Squad.nix
+
+  NixOS flake for standing up multiple [[https://joinsquad.com/][Squad]] Servers on
+  [[https://nixos.org/][NixOS]].
+
+** Installation to a NixOS Flake Config
+
+   #+BEGIN_SRC nix
+   {
+     inputs.squad-nix.url = "github:AsgardEternal/Squad.nix";
+
+     outputs = { self, nixpkgs, squad-nix, ... }: {
+       nixosConfigurations.exampleHost = nixpkgs.lib.nixosSystem {
+         system = "x86_64-linux";
+         modules = [
+           # ...
+           squad-nix.nixosModules.default
+         ]
+       };
+     }
+   }
+   #+END_SRC
+
+** Example Configuration
+
+   #+BEGIN_SRC nix
+   services.squad-server = {
+     servers."[ASG] Asgard Eternal | New Player Friendly" = {
+       enable = true;
+       openFirewall = true;
+       config = {
+         layerRotation = [
+           "Gorodok_Invasion_v3"
+           "Gorodok_RAAS_v12"
+           "Harju_RAAS_v6"
+           "Manicouagan_Invasion_v2"
+           "Manicouagan_Invasion_v2"
+           "Yehorivka_RAAS_v13"
+           "Mestia_Invasion_v2"
+         ];
+         admins = global_admin_config;
+       };
+     };
+   };
+   #+END_SRC
+
+   All settings can be viewed within the [[./nixos-modules/squad-servers.nix][Squad Server Module]].
+
+** Defaults
+
+   By default this module does /not/ attempt to increment the in use ports for each server defined.
+   It is expected that each server has its ports defined via ~gamePort~, ~rconPort~, ~queryPort~, and
+   ~beaconPort~ if more than one server is defined.
+
+   The default configuration largely follows the default settings that Squad installs its configs
+   as, but there may be options that do not closely follow defaults or shouldn't be modified. One
+   such example is map voting. This is due to the lack of functionality for the feature, or due to
+   the option not being permitted in Licensed servers.
+
+   This module attempts to closely follow licensed server configuration requirements.
+
+** Security
+
+   Preference all ~passwordFile~ options over the generic ~password~ option if possible (or
+   equivalents, such as ~license.file~ instead of ~license.content~). Using non file options for
+   secrets can expose your secrets in the Nix store.
+
+   By default all secrets are loaded via [[https://systemd.io/CREDENTIALS/][Systemd Credentials]]
+   (~systemd.systemd-credentials(7)~).
+
+** Purpose of this Repository
+
+   As part of a migration in Asgard Eternal's infrastructure, we're shifting our primary operating
+   system to NixOS. This module was created separately to support that initiative.
+
+   Interested in joining up with a community to play Squad? Join [[https://discord.gg/asg][Asgard Eternal's Discord]].
