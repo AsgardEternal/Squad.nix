@@ -38,7 +38,38 @@
            "Yehorivka_RAAS_v13"
            "Mestia_Invasion_v2"
          ];
-         admins = global_admin_config;
+         admins = {
+           Admin = {
+             comment = "Admin Group";
+             accessLevels = [
+               "changemap"
+               "pause"
+               "balance"
+               "chat"
+               "kick"
+               "ban"
+               "cameraman"
+               "teamchange"
+               "forceteamchange"
+               "canseeadminchat"
+               "reserve"
+               "config"
+               "cheat"
+               "featuretest"
+             ];
+             members = [
+               {
+                 id = 76561199101367413;
+                 comment = "Atrocity";
+               }
+               {
+                 id = 76561198153769543;
+                 comment = "MaxRecon";
+               }
+               # ...
+            ];
+           };
+         };
        };
      };
    };
