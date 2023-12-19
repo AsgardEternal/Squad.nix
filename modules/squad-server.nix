@@ -80,6 +80,19 @@ in
             '';
           };
 
+          mods = lib.mkOption {
+            # TODO: Better define requirements for a mod id beyond being a positive integer
+            type = lib.types.listOf lib.types.ints.positive;
+            default = [ ];
+            description = ''
+              A list of mods to install to the server via their ids.
+
+              A mod example would be `1959152751`, which is the Middle East Escalation mod for
+              Squad. It can be found at this link:
+              https://steamcommunity.com/sharedfiles/filedetails/?id=1959152751.
+            '';
+          };
+
           config = {
             rcon = {
               settings = lib.mkOption {
@@ -898,6 +911,48 @@ in
                   +login anonymous \
                   +app_update 403240 validate \
                   +quit
+
+                # Install mods if any are defined
+                ${let
+                  workshop_id = "393380";
+                  mod_install_dir = "${server_dir}/steamapps/workshop/content/${workshop_id}";
+                in
+                 lib.optionalString (builtins.length (cfg.mods) > 0) ''
+                cat <<-__EOS__
+                ┌
+                │ Installing Mods for Squad Server:
+                │  Mod IDs -> ${builtins.toString cfg.mods}
+                │
+                │ This may take a while as the server will need to download any required files if they
+                │ weren't downloaded previously.
+                └
+                __EOS__
+                read -ra SQUAD_MODS <<< "${builtins.toString cfg.mods}"
+                for mod in "''${SQUAD_MODS[@]}"; do
+                  printf "Attempting to install mod: '%s'\n" "$mod"
+                  # We have to do this attempt stuff because steamcmd can timeout while downloading
+                  # large mods. By making another attempt steamcmd will continue downloading from
+                  # where it left off. From experience it should need no more than 5 attempts. Any
+                  # more than that and either steam is getting DoS'd, you've been rate limited
+                  # completely, your network is *way* too slow, or nuclear war has been declared and
+                  # all that remains of AWS east is a crater.
+                  REMAINING_ATTEMPTS=5
+                  until HOME="/var/cache/${cfg.cacheDir}" ${pkgs.steamcmd}/bin/steamcmd \
+                    +force_install_dir "${mod_install_dir}/$mod" \
+                    +login anonymous \
+                    +workshop_download_item  "${workshop_id}" "$mod" \
+                    +quit; do
+                      (( REMAINING_ATTEMPTS-- ))
+                      printf "Did not fully download squad mod '%s', remaining attempts: '%s'\n" \
+                        "$mod" "$REMAINING_ATTEMPTS"
+                      if (( REMAINING_ATTEMPTS == 0 )); then
+                        printf "Too many attempts while downloading a mod! Failed to download the mod: '%s'\n" "$mod"
+                        exit 1
+                      fi
+                    done
+                    ln -sf "${mod_install_dir}/$mod" "${server_dir}/SquadGame/Plugins/Mods/$mod"
+                done
+                ''}
 
                 cat <<-__EOS__
                 ┌
