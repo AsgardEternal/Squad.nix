@@ -929,7 +929,7 @@ in
                 __EOS__
                 read -ra SQUAD_MODS <<< "${builtins.toString cfg.mods}"
                 for mod in "''${SQUAD_MODS[@]}"; do
-                  printf "Attempting to install mod: '%s'\n" "$mod"
+                  printf "==== Attempting to install mod: '%s' ====\n" "$mod"
                   # We have to do this attempt stuff because steamcmd can timeout while downloading
                   # large mods. By making another attempt steamcmd will continue downloading from
                   # where it left off. From experience it should need no more than 5 attempts. Any
@@ -946,11 +946,12 @@ in
                       printf "Did not fully download squad mod '%s', remaining attempts: '%s'\n" \
                         "$mod" "$REMAINING_ATTEMPTS"
                       if (( REMAINING_ATTEMPTS == 0 )); then
-                        printf "Too many attempts while downloading a mod! Failed to download the mod: '%s'\n" "$mod"
+                        printf "#### Too many attempts while downloading a mod! Failed to download the mod: '%s' ####\n" "$mod"
                         exit 1
                       fi
                     done
                     ln -sf "${mod_install_dir}/$mod" "${server_dir}/SquadGame/Plugins/Mods/$mod"
+                    printf "#### Successfully installed mod: '%s' ####\n" "$mod"
                 done
                 ''}
 
