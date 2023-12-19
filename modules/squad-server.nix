@@ -983,15 +983,15 @@ in
                 cp -f "${path}" ./"${name}.cfg"
                 '') "" cfgs}
 
+                # Correct the permissions for the Squad Server cfgs. When the Squad Server is first
+                # installed it will include the configs by default with an overly open CHMOD.
+                chmod 0600 *.cfg
+
                 ${lib.optionalString (cfg.config.server.passwordFile != null) ''
                 ## Handle secrets for the `Server.cfg` file ##
                 # Safely load the server password outside of the nix store
                 sed -i -e 's/^ServerPassword=.*$/ServerPassword='"$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_SERVER_PASSWORD_FILE)"'/g' ./Server.cfg
                 ''}
-
-                # Correct the permissions for the Squad Server cfgs. When the Squad Server is first
-                # installed it will include the configs by default with an overly open CHMOD.
-                chmod 0400 *.cfg
 
                 ${lib.optionalString (cfg.config.rcon.passwordFile != null) ''
                 ## Handle secrets for the `Rcon.cfg` file ##
@@ -1004,6 +1004,10 @@ in
                 # Safely load the license outside of the nix store
                 printf "%s" "$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_LICENSE_FILE)" > ./License.cfg
                 ''}
+
+                # Correct the permissions for the Squad Server cfgs. When the Squad Server is first
+                # installed it will include the configs by default with an overly open CHMOD.
+                chmod 0600 *.cfg
 
                 popd >/dev/null 2>&1
 
