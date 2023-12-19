@@ -1037,8 +1037,8 @@ in
                 __EOS__
 
                 LD_LIBRARY_PATH="${pkgs.stdenv.cc.cc.lib}/lib" ./SquadGameServer.sh \
-                  Port=${builtins.toString cfg.gamePort} \
-                  QueryPort=${builtins.toString cfg.queryPort} \
+                  Port=${builtins.toString (builtins.elemAt cfg.gamePort 0)} \
+                  QueryPort=${builtins.toString (builtins.elemAt cfg.queryPort 0)} \
                   FIXEDMAXTICKRATE=${builtins.toString cfg.config.server.maxTickRate} \
                   FIXEDMAXPLAYERS=${builtins.toString cfg.config.server.settings.MaxPlayers} \
                   beaconport=${builtins.toString cfg.beaconPort}
