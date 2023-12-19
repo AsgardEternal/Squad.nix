@@ -990,13 +990,13 @@ in
                 ${lib.optionalString (cfg.config.server.passwordFile != null) ''
                 ## Handle secrets for the `Server.cfg` file ##
                 # Safely load the server password outside of the nix store
-                sed -i -e 's/^ServerPassword=.*$/ServerPassword='"$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_SERVER_PASSWORD_FILE)"'/g' ./Server.cfg
+                sed -i 's/^ServerPassword=.*$/ServerPassword='"$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_SERVER_PASSWORD_FILE)"'/' ./Server.cfg
                 ''}
 
                 ${lib.optionalString (cfg.config.rcon.passwordFile != null) ''
                 ## Handle secrets for the `Rcon.cfg` file ##
                 # Safely load the rcon password outside of the nix store
-                sed -i -e 's/^Password=.*$/Password='"$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_RCON_PASSWORD_FILE)"'/g' ./Rcon.cfg
+                sed -i 's/^Password=.*$/Password='"$(${pkgs.systemd}/bin/systemd-creds cat SQUAD_RCON_PASSWORD_FILE)"'/' ./Rcon.cfg
                 ''}
 
                 ${lib.optionalString (cfg.config.license.file != null) ''
