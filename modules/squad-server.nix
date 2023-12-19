@@ -65,7 +65,7 @@ in
 
           stateDir = lib.mkOption {
             type = lib.types.str;
-            default = "squad/${replaceNonAlum "-" name}";
+            default = "squad/${replaceNonAlum "_" name}";
             description = ''
               State directory for the systemd user service. This is where the Squad Server will be
               installed to along with configuration.
@@ -74,7 +74,7 @@ in
 
           cacheDir = lib.mkOption {
             type = lib.types.str;
-            default = "squad/${replaceNonAlum "-" name}";
+            default = "squad/${replaceNonAlum "_" name}";
             description = ''
               State directory for the systemd user service.
             '';
