@@ -15,8 +15,8 @@ in
         Defined as `servers.<name>`. By default the `<name>` will be used as the
         `servers.<name>.config.server.settings.ServerName`.
       '';
-      type = lib.types.attrsOf (lib.types.submodule ({ name, ... }: {
-        options = rec {
+      type = lib.types.attrsOf (lib.types.submodule ({ name, config, ... }: {
+        options = {
           enable = lib.mkEnableOption "Enable Squad Server";
           openFirewall = lib.mkOption {
             type = lib.types.bool;
@@ -106,6 +106,16 @@ in
                 type = lib.types.submodule {
                   freeformType = settingsFormat.type;
                   options = {
+                    Port = lib.mkOption {
+                      type = lib.types.port;
+                      default = builtins.elemAt config.rconPort 0;
+                      visible = false;
+                      readOnly = true;
+                      description = ''
+                        RCON port to define in the Rcon.cfg. This will always use the rcon port
+                        defined in `rconPort`.
+                      '';
+                    };
                     IP = lib.mkOption {
                       type = lib.types.str;
                       default = "0.0.0.0";
@@ -980,12 +990,7 @@ in
                 ${acc}
                 # Handle the ${name} configuration
                 printf "Generating the '%s' configuration file.\n" "${name}.cfg"
-                cp -f "${path}" ./"${name}.cfg"
-                '') "" cfgs}
-
-                # Correct the permissions for the Squad Server cfgs. When the Squad Server is first
-                # installed it will include the configs by default with an overly open CHMOD.
-                chmod 0600 *.cfg
+                cp -f "${path}" ./"${name}.cfg"'') "" cfgs}
 
                 ${lib.optionalString (cfg.config.server.passwordFile != null) ''
                 ## Handle secrets for the `Server.cfg` file ##
