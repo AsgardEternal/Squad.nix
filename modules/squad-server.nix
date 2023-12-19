@@ -756,13 +756,6 @@ in
             };
           };
 
-          extraStartArgs = lib.mkOption {
-            type = lib.types.listOf lib.types.str;
-            default = [ ];
-            description = ''
-              Additional arguments to pass to the Squad Server when it is launched.
-            '';
-          };
         };
       }));
     };
